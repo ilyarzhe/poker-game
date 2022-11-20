@@ -17,11 +17,10 @@ public class DeckTest {
     }
     @Test
     public void deckBuild(){
-        assertThat(deck.getCards().get(51).toString()).isEqualTo("10 of Spades");
+        assertThat(deck.getCards().size()).isEqualTo(52);
     }
     @Test
     public void checkSize(){
-        assertThat(deck.getCards().size()).isEqualTo(52);
     }
 
 }

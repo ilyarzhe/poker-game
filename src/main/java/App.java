@@ -5,7 +5,7 @@ public class App {
         Poker.buildCombinations();
         Deck deck = new Deck();
         deck.build();
-        System.out.println(Poker.getCardValues().keySet().size());
+        deck.shuffle();
 
     }
 }
