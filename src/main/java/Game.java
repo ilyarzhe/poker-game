@@ -7,14 +7,12 @@ public class Game {
     private Deck deck;
     private ArrayList<Card> cardTable;
 
-    public Game(int pot,
-                ArrayList<Player> players,
-                Deck deck,
-                ArrayList<Card> cardTable){
-        this.pot =pot;
-        this.players = players;
-        this.deck = deck;
-        this.cardTable = cardTable;
+    public Game(){
+        this.pot = 0;
+        this.players = new ArrayList<>();
+        this.deck = new Deck();
+        this.cardTable = new ArrayList<>();
+
 
     }
     public int getPot(){
@@ -41,4 +39,19 @@ public class Game {
     public void setCardTable(ArrayList<Card> cards){
         this.cardTable = cards;
     }
+    public void genFlop(){
+        this.cardTable.add(this.deck.getCards().get(5));
+        this.cardTable.add(this.deck.getCards().get(6));
+        this.cardTable.add(this.deck.getCards().get(7));
+    }
+    public void genTurn(){
+        this.cardTable.add(this.deck.getCards().get(9));
+    }
+    public void genRiver(){
+        this.cardTable.add(this.deck.getCards().get(11));
+    }
+    public boolean playOn(){
+        return this.getPlayers().get(0).isInGame()&&this.getPlayers().get(1).isInGame();
+    }
+
 }

@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,13 +8,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class DeckTest {
     private Deck deck;
-    @BeforeEach
-    public void setUp(){
-        deck = new Deck();
+    @BeforeAll
+    public static void beforeAllSetup(){
         Poker.buildCardValues();
         Poker.buildCombinations();
         Poker.buildSuits();
-        deck.build();
+    }
+
+    @BeforeEach
+    public void setUp(){
+        deck = new Deck();
     }
     @Test
     public void deckBuild(){
