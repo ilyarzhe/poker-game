@@ -23,8 +23,4 @@ public class DeckTest {
     public void deckBuild(){
         assertThat(deck.getCards().size()).isEqualTo(52);
     }
-    @Test
-    public void checkSize(){
-    }
-
 }

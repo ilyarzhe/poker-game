@@ -131,5 +131,35 @@ public class Player {
         }
         return false;
     }
+    public HashMap<String,Integer> checkFrequency(Game game){
+        HashMap<String, Integer> frequencyTable = Poker.getCardValues();
+        for (String cardName:frequencyTable.keySet()){
+            frequencyTable.put(cardName,0);
+        }
+        ArrayList<Card> fullTable = this.genFullTable(game);
+        for (Card card:fullTable){
+            String cardName = card.getCardName();
+            frequencyTable.put(cardName,frequencyTable.get(cardName)+1);
+
+        }
+        return frequencyTable;
+
+    }
+    public boolean hasPair(HashMap<String,Integer> frequencyTable){
+        for (int cardCount: frequencyTable.values()){
+            if (cardCount>=2){
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public boolean hasTwoPair(HashMap<String,Integer> frequencyTable){
+    int count2 = Collections.frequency(frequencyTable.values(),2);
+    int count3 = Collections.frequency(frequencyTable.values(),3);
+    int count4 = Collections.frequency(frequencyTable.values(),4);
+    return count2+count3+count4>=2;
+    }
+
 
 }

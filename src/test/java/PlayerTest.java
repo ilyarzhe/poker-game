@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -170,6 +171,145 @@ public class PlayerTest {
         player1.setHand(fakeHand);
         assertThat(player1.hasStraight(game)).isEqualTo(true);
     }
+    @Test
+    public void ReturnCardFrequency_all_1(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
+        player1.setHand(fakeHand);
+        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(1);
+    }
+    @Test
+    public void ReturnCardFrequency__Pair(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 12, "Q"));
+        player1.setHand(fakeHand);
+        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(2);
+    }
+    @Test
+    public void ReturnCardFrequency__Set(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
+        player1.setHand(fakeHand);
+        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(3);
+    }
+    @Test
+    public void ReturnCardFrequency__TwoPair(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 3, "3"));
+        player1.setHand(fakeHand);
+        HashMap<String,Integer> actual = player1.checkFrequency(game);
+        assertThat(actual.get("A")).isEqualTo(2);
+        assertThat(actual.get("3")).isEqualTo(2);
+    }
+    @Test
+    public void ReturnCardFrequency__FullHouse(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 2, "2"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
+        player1.setHand(fakeHand);
+        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(3);
+        assertThat(player1.checkFrequency(game).get("2")).isEqualTo(2);
+    }
+    @Test
+    public void ReturnCardFrequency_Quad(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 14, "A"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
+        player1.setHand(fakeHand);
+        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(4);
+    }
+    @Test
+    public void CheckPair__true(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 14, "A"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 6, "6"), new Card("Clubs", 7, "7"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasPair(player1.checkFrequency(game))).isEqualTo(true);
+    }
+    @Test
+    public void CheckPair__false(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 14, "A"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasPair(player1.checkFrequency(game))).isEqualTo(false);
+    }
+    @Test
+    public void CheckTwoPair__false(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 13, "K"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasTwoPair(player1.checkFrequency(game))).isEqualTo(false);
+    }
+    @Test
+    public void CheckTwoPair__true(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 13, "K"));
+        fakeTable.add(new Card("Clubs", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Spades", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 3, "3"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasTwoPair(player1.checkFrequency(game))).isEqualTo(true);
+    }
+
+
+
+
+
+
 }
 
 
