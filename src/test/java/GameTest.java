@@ -20,8 +20,8 @@ public class GameTest {
     @BeforeEach
     public void setUp(){
         table = new Game();
-        Player player1 = new Player("Henry",100,true);
-        Player player2 = new Player("Ivan",100,true);
+        Player player1 = new Player("Henry",100,true,true);
+        Player player2 = new Player("Ivan",100,true,false);
         ArrayList<Player> players = new ArrayList<>();
         players.add(player1);
         players.add(player2);

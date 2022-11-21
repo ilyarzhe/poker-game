@@ -53,5 +53,8 @@ public class Game {
     public boolean playOn(){
         return this.getPlayers().get(0).isInGame()&&this.getPlayers().get(1).isInGame();
     }
+    public void addToPot(int amount){
+        this.pot+=amount;
+    }
 
 }
