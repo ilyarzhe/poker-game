@@ -106,22 +106,24 @@ public class Player {
         fullTable.add(this.getHand().getCard2());
         return fullTable;
     }
-
-    public boolean hasFlush(Game game) {
-        HashMap<String, Integer> suitCount = new HashMap<>();
-        for (String suit :
-                Poker.getSuits()) {
-            suitCount.put(suit, 0);
-        }
+    public HashMap<String,Integer> checkSuitCount(Game game){
+        HashMap<String, Integer> suitCount = Poker.getCombinationTracker();
         for (Card card :
                 this.genFullTable(game)) {
-            suitCount.replace(card.getSuit(), suitCount.get(card.getSuit()) + 1);
+            String cardSuit = card.getSuit();
+            suitCount.replace(cardSuit, suitCount.get(cardSuit) + 1);
         }
-        for (Integer count :
-                suitCount.values()) {
-            if (count >= 5) {
+        return suitCount;
+    }
+
+    public boolean hasFlush(Game game) {
+        for (Integer suitCount  :
+                this.checkSuitCount(game).values()) {
+            if (suitCount>=5){
                 return true;
             }
+
+
         }
         return false;
 
@@ -204,8 +206,8 @@ public class Player {
             return false;
         }
         ArrayList<Card> fullTable = genFullTable(game);
-        //Todo: implement a check for a straight and flush together! Check that we have the same cards for both flush and straight
-        
+        //Todo: Check that we have the same cards for both flush and straight
+        return true;
     }
 
 

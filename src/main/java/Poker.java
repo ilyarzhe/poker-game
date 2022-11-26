@@ -5,6 +5,7 @@ public class Poker {
     private static HashMap<String,Integer> combinationsScore = new HashMap<>();
     private static ArrayList<String> suits = new ArrayList<>();
     private static HashMap<String,Integer> cardValues = new HashMap<>();
+    private static HashMap<String,Integer> combinationTracker = new HashMap<>();
 
     // Getters
     public static HashMap<String,Integer> getCombinations(){
@@ -16,6 +17,11 @@ public class Poker {
     public static HashMap<String, Integer> getCardValues(){
         return cardValues;
     }
+
+    public static HashMap<String, Integer> getCombinationTracker() {
+        return combinationTracker;
+    }
+
     public static void buildCombinations(){
         ArrayList<String> combinations = new ArrayList<>();
         combinations.add("High Card");
@@ -59,7 +65,11 @@ public class Poker {
             }
         }
     }
-
+    public static void buildCombinationTracker(){
+        for (String key : getSuits()){
+            combinationTracker.put(key,0);
+        }
+    }
 
 
 }

@@ -21,6 +21,7 @@ public class PlayerTest {
 
     @BeforeEach
     public void setUp() {
+        Poker.buildCombinationTracker();
         player1 = new Player("Henry", 100, true, true);
         game = new Game();
         deck = new Deck();
