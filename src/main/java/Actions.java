@@ -1,3 +1,3 @@
 public enum Actions {
-    BET,FOLD,CHECK
+    BET,FOLD,CHECK,ALLIN
 }
