@@ -107,7 +107,7 @@ public class Player {
         return fullTable;
     }
     public HashMap<String,Integer> checkSuitCount(Game game){
-        HashMap<String, Integer> suitCount = Poker.getCombinationTracker();
+        HashMap<String, Integer> suitCount = Poker.getSuitCountTracker();
         for (Card card :
                 this.genFullTable(game)) {
             String cardSuit = card.getSuit();
@@ -155,14 +155,11 @@ public class Player {
     }
 
     public HashMap<String, Integer> checkFrequency(Game game) {
-        HashMap<String, Integer> frequencyTable = Poker.getCardValues();
-        for (String cardName : frequencyTable.keySet()) {
-            frequencyTable.put(cardName, 0);
-        }
+        HashMap<String,Integer> frequencyTable = Poker.getCardFrequencyTracker();
         ArrayList<Card> fullTable = this.genFullTable(game);
         for (Card card : fullTable) {
             String cardName = card.getCardName();
-            frequencyTable.put(cardName, frequencyTable.get(cardName) + 1);
+            frequencyTable.replace(cardName, frequencyTable.get(cardName) + 1);
 
         }
         return frequencyTable;
@@ -207,6 +204,7 @@ public class Player {
         }
         ArrayList<Card> fullTable = genFullTable(game);
         //Todo: Check that we have the same cards for both flush and straight
+        // It might be a good idea to modify the functions for straight and flush and then check for Straight Flush
         return true;
     }
 

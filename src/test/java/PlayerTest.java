@@ -21,7 +21,8 @@ public class PlayerTest {
 
     @BeforeEach
     public void setUp() {
-        Poker.buildCombinationTracker();
+        Poker.buildSuitCountTracker();
+        Poker.buildCardFrequencyTracker();
         player1 = new Player("Henry", 100, true, true);
         game = new Game();
         deck = new Deck();
@@ -237,8 +238,9 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
         player1.setHand(fakeHand);
-        assertThat(player1.checkFrequency(game).get("A")).isEqualTo(3);
-        assertThat(player1.checkFrequency(game).get("2")).isEqualTo(2);
+        HashMap<String,Integer> actual = player1.checkFrequency(game);
+        assertThat(actual.get("A")).isEqualTo(3);
+        assertThat(actual.get("2")).isEqualTo(2);
     }
     @Test
     public void ReturnCardFrequency_Quad(){
