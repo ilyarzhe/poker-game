@@ -87,13 +87,13 @@ public class Player {
     }
 
     public void drawHand(Game game) {
+        Hand dealtHand;
         if (this.underTheGun) {
-            Hand dealtHand = new Hand(game.getDeck().getCards().get(0), game.getDeck().getCards().get(2));
-            this.hand = dealtHand;
+            dealtHand = new Hand(game.getDeck().getCards().get(0), game.getDeck().getCards().get(2));
         } else {
-            Hand dealtHand = new Hand(game.getDeck().getCards().get(1), game.getDeck().getCards().get(3));
-            this.hand = dealtHand;
+            dealtHand = new Hand(game.getDeck().getCards().get(1), game.getDeck().getCards().get(3));
         }
+        this.hand = dealtHand;
 
 
     }
@@ -218,10 +218,11 @@ public class Player {
         }
         return cardListSameSuit;
     }
-    public Integer getHighestCardValueInAStraightFlush(Game game){
+    public Integer getHighestCardValueInAStraightFlush(Game game) {
         ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(game);
-        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardListSameSuit));
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(game, cardListSameSuit));
     }
+    //Todo: implement a method to give Hand score based on the combination available
 
 
 }
