@@ -200,6 +200,13 @@ public class Player {
         if (!hasFlush(game)||!hasStraight(game,genFullTable(game))){
             return false;
         }
+        return getHighestCardValueInAStraightFlush(game)>0;
+
+        //Todo: Check that we have the same cards for both flush and straight
+        // It might be a good idea to modify the functions for straight and flush and then check for Straight Flush
+
+    }
+    public ArrayList<Card> getListOfCardsInAFlush(Game game){
         HashMap<String, Integer> suitCount = checkSuitCount(game);
         ArrayList<Card> fullTable = genFullTable(game);
         ArrayList<Card> cardListSameSuit = new ArrayList<>();
@@ -209,11 +216,11 @@ public class Player {
                 cardListSameSuit.add(fullTable.get(i));
             }
         }
-        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardListSameSuit))>0;
-
-        //Todo: Check that we have the same cards for both flush and straight
-        // It might be a good idea to modify the functions for straight and flush and then check for Straight Flush
-
+        return cardListSameSuit;
+    }
+    public Integer getHighestCardValueInAStraightFlush(Game game){
+        ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(game);
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardListSameSuit));
     }
 
 
