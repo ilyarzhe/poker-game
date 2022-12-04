@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class Player {
     private String name;
@@ -128,30 +126,30 @@ public class Player {
         return false;
 
     }
-
-    public boolean hasStraight(Game game) {
+    public ArrayList<Integer> getUniqueCardValueTable(Game game ,ArrayList<Card> cardTable){
         ArrayList<Integer> cardValuesOrdered = new ArrayList<>();
-        for (Card card :
-                this.genFullTable(game)) {
+        for (Card card :cardTable) {
             cardValuesOrdered.add(card.getValue());
 
         }
         HashSet<Integer> cardValuesSet = new HashSet<>(cardValuesOrdered);
-        Collections.sort(cardValuesOrdered);
-        int setSize = cardValuesOrdered.size();
-        if (cardValuesSet.size() >= 5) {
-            for (int i = 0; i < setSize - 5; i++) {
-                if (cardValuesOrdered.get(i + 4) - cardValuesOrdered.get(i) == 4) {
-                    return true;
-                }
-            }
-            if (cardValuesOrdered.get(setSize - 1) - cardValuesOrdered.get(0) == 12 &&
-                    cardValuesOrdered.get(3) - cardValuesOrdered.get(0) == 3) {
-                return true;
-            }
-
+        ArrayList<Integer> cardValuesOrderedSet = new ArrayList<>(cardValuesSet);
+        if (cardValuesOrderedSet.get(cardValuesOrderedSet.size()-1)==14){
+            cardValuesOrderedSet.add(0,1);
         }
-        return false;
+        return cardValuesOrderedSet;
+    }
+    public Integer getHighestCardValueInAStraight(ArrayList<Integer> cardValuesOrderedSet){
+        for(int i = cardValuesOrderedSet.size()-1;i>=4;i--){
+            if (cardValuesOrderedSet.get(i)-cardValuesOrderedSet.get(i-4)==4){
+                return cardValuesOrderedSet.get(i);
+            }
+        }
+        return 0;
+    }
+
+    public boolean hasStraight(Game game,ArrayList<Card> cardList) {
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardList))>0;
     }
 
     public HashMap<String, Integer> checkFrequency(Game game) {
@@ -199,13 +197,23 @@ public class Player {
         return  (count3>=1&&count2>=1)||(count2>=1&&count3>=1)||(count3>=1&&count4>=1);
     }
     public boolean hasStraightFlush(Game game){
-        if (!hasStraight(game)||!hasFlush(game)){
+        if (!hasFlush(game)||!hasStraight(game,genFullTable(game))){
             return false;
         }
+        HashMap<String, Integer> suitCount = checkSuitCount(game);
         ArrayList<Card> fullTable = genFullTable(game);
+        ArrayList<Card> cardListSameSuit = new ArrayList<>();
+        for (int i =0; i<fullTable.size();i++){
+            String cardSuit = fullTable.get(i).getSuit();
+            if(suitCount.get(cardSuit)>=5){
+                cardListSameSuit.add(fullTable.get(i));
+            }
+        }
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardListSameSuit))>0;
+
         //Todo: Check that we have the same cards for both flush and straight
         // It might be a good idea to modify the functions for straight and flush and then check for Straight Flush
-        return true;
+
     }
 
 

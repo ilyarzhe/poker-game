@@ -115,7 +115,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(game)).isEqualTo(true);
+        assertThat(player1.hasStraight(game,player1.genFullTable(game))).isEqualTo(true);
     }
 
     @Test
@@ -129,21 +129,20 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 7, "7"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(game)).isEqualTo(true);
+        assertThat(player1.hasStraight(game,player1.genFullTable(game))).isEqualTo(true);
     }
-
     @Test
     public void straight__2fromHand() {
         ArrayList<Card> fakeTable = new ArrayList<>();
         fakeTable.add(new Card("Hearts", 10, "10"));
-        fakeTable.add(new Card("Clubs", 12, "Q"));
+        fakeTable.add(new Card("Clubs", 7, "7"));
         fakeTable.add(new Card("Diamonds", 9, "9"));
         fakeTable.add(new Card("Hearts", 7, "7"));
-        fakeTable.add(new Card("Spades", 14, "A"));
+        fakeTable.add(new Card("Spades", 6, "6"));
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 8, "8"), new Card("Clubs", 6, "6"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(game)).isEqualTo(true);
+        assertThat(player1.hasStraight(game,player1.genFullTable(game))).isEqualTo(true);
     }
 
     @Test
@@ -157,7 +156,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 2, "2"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(game)).isEqualTo(false);
+        assertThat(player1.hasStraight(game,player1.genFullTable(game))).isEqualTo(false);
     }
 
     @Test
@@ -171,7 +170,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(game)).isEqualTo(true);
+        assertThat(player1.hasStraight(game,player1.genFullTable(game))).isEqualTo(true);
     }
     @Test
     public void ReturnCardFrequency_all_1(){
@@ -369,9 +368,35 @@ public class PlayerTest {
         fakeTable.add(new Card("Hearts", 4, "4"));
         fakeTable.add(new Card("Spades", 5, "5"));
         game.setCardTable(fakeTable);
-        Hand fakeHand = new Hand(new Card("Spades", 13, "A"), new Card("Clubs", 3, "3"));
+        Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 3, "3"));
         player1.setHand(fakeHand);
         assertThat(player1.hasFullHouse(player1.checkFrequency(game))).isEqualTo(false);
+    }
+    @Test
+    public void straightFlush__true(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 3, "3"));
+        fakeTable.add(new Card("Hearts", 2, "2"));
+        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Hearts", 5, "5"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Hearts", 14, "A"), new Card("Clubs", 3, "3"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasStraightFlush(game)).isEqualTo(true);
+    }
+    @Test
+    public void straightFlush__false(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 5, "5"));
+        fakeTable.add(new Card("Hearts", 6, "6"));
+        fakeTable.add(new Card("Spades", 14, "A"));
+        fakeTable.add(new Card("Hearts", 7, "7"));
+        fakeTable.add(new Card("Hearts", 11, "J"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Hearts", 9, "9"), new Card("Clubs", 8, "8"));
+        player1.setHand(fakeHand);
+        assertThat(player1.hasStraightFlush(game)).isEqualTo(false);
     }
 
 
