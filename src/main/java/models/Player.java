@@ -1,3 +1,7 @@
+package models;
+
+import components.Poker;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -174,36 +178,33 @@ public class Player {
 
     }
 
-    public Integer CountFrequencies(HashMap<String, Integer> frequencyTable, Integer targetFrequency) {
+    public Integer countFrequencies(HashMap<String, Integer> frequencyTable, Integer targetFrequency) {
         return Collections.frequency(frequencyTable.values(), targetFrequency);
     }
 
     public boolean hasTwoPair(HashMap<String, Integer> frequencyTable) {
-        return CountFrequencies(frequencyTable, 2) + CountFrequencies(frequencyTable, 3) + CountFrequencies(frequencyTable, 4) >= 2;
+        return countFrequencies(frequencyTable, 2) + countFrequencies(frequencyTable, 3) + countFrequencies(frequencyTable, 4) >= 2;
     }
 
     public boolean hasSet(HashMap<String, Integer> frequencyTable) {
-        return CountFrequencies(frequencyTable, 3) + CountFrequencies(frequencyTable, 4) >= 1;
+        return countFrequencies(frequencyTable, 3) + countFrequencies(frequencyTable, 4) >= 1;
     }
 
     public boolean hasQuads(HashMap<String, Integer> frequencyTable) {
-        return CountFrequencies(frequencyTable, 4) >= 1;
+        return countFrequencies(frequencyTable, 4) >= 1;
     }
 
     public boolean hasFullHouse(HashMap<String, Integer> frequencyTable) {
-        int count2 = CountFrequencies(frequencyTable, 2);
-        int count3 = CountFrequencies(frequencyTable, 3);
-        int count4 = CountFrequencies(frequencyTable, 4);
-        return  (count3>=1&&count2>=1)||(count2>=1&&count3>=1)||(count3>=1&&count4>=1);
+        int count2 = countFrequencies(frequencyTable, 2);
+        int count3 = countFrequencies(frequencyTable, 3);
+        int count4 = countFrequencies(frequencyTable, 4);
+        return  (count3>=1&&count2>=1)||(count2>=1&&count4>=1)||(count3>=1&&count4>=1);
     }
     public boolean hasStraightFlush(Game game){
         if (!hasFlush(game)||!hasStraight(game,genFullTable(game))){
             return false;
         }
         return getHighestCardValueInAStraightFlush(game)>0;
-
-        //Todo: Check that we have the same cards for both flush and straight
-        // It might be a good idea to modify the functions for straight and flush and then check for Straight Flush
 
     }
     public ArrayList<Card> getListOfCardsInAFlush(Game game){
@@ -222,7 +223,8 @@ public class Player {
         ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(game);
         return getHighestCardValueInAStraight(getUniqueCardValueTable(game, cardListSameSuit));
     }
-    //Todo: implement a method to give Hand score based on the combination available
+    //TODO:HandScore function
+
 
 
 }

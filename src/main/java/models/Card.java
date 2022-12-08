@@ -1,3 +1,4 @@
+package models;
 
 public class Card {
     private String suit;

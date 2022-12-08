@@ -1,3 +1,7 @@
+package models;
+
+import models.Card;
+
 public class Hand {
     private Card card1;
     private Card card2;

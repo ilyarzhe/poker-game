@@ -1,3 +1,7 @@
+package models;
+
+import components.Poker;
+
 import java.util.ArrayList;
 import java.util.Random;
 

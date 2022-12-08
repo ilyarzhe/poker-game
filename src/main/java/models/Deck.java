@@ -1,3 +1,8 @@
+package models;
+
+import components.Poker;
+import models.Card;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,7 +16,7 @@ public class Deck {
     public ArrayList<Card> getCards(){
         return this.cards;
     }
-    //TODO: generate a deck using a forloop and Poker static methods
+    //TODO: generate a deck using a forloop and components.Poker static methods
     public void build(){
         if (getCards().size()!=52) {
             for (String suit : Poker.getSuits()) {
