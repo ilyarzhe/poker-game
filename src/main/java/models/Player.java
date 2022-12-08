@@ -2,8 +2,10 @@ package models;
 
 import components.Poker;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Player {
     private String name;
@@ -224,7 +226,21 @@ public class Player {
         return getHighestCardValueInAStraight(getUniqueCardValueTable(game, cardListSameSuit));
     }
     //TODO:HandScore function
+    public Integer getHandScoreFromTable(Game game){
+        ArrayList<Card> table = genFullTable(game);
+        HashMap<String,Integer> frequencyTable = checkFrequency(game);
 
+        if(getHighestCardValueInAStraightFlush(game)!=0){
+            setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(game));
+            return getHandScore();
+        }
+        return 0;
+
+        // Start generate highest card in a straight, highest card in flush and count frequencies
+        // Think of the best order to check combinations
+        // add a score to the combination based on the highest card
+
+    }
 
 
 }

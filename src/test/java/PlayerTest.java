@@ -2,8 +2,10 @@ import components.Poker;
 import models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -400,6 +402,26 @@ public class PlayerTest {
         player1.setHand(fakeHand);
         assertThat(player1.hasStraightFlush(game)).isEqualTo(false);
     }
+//    @Disabled
+    @Test
+    public void StraightFlushScore(){
+        ArrayList<Card> fakeTable = new ArrayList<>();
+        fakeTable.add(new Card("Hearts", 5, "5"));
+        fakeTable.add(new Card("Hearts", 6, "6"));
+        fakeTable.add(new Card("Spades", 14, "A"));
+        fakeTable.add(new Card("Hearts", 7, "7"));
+        fakeTable.add(new Card("Hearts", 11, "J"));
+        game.setCardTable(fakeTable);
+        Hand fakeHand = new Hand(new Card("Hearts", 9, "9"), new Card("Hearts", 8, "8"));
+        player1.setHand(fakeHand);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(8*14+9);
+    }
+
+    @Test
+    public void Another(){
+        assertThat(Poker.getCombinations().get("Straight Flush")).isEqualTo(8);
+    }
+
 
 
 
