@@ -58,5 +58,19 @@ public class Game {
     public void addToPot(int amount){
         this.pot+=amount;
     }
-
+    public void reset(){
+        this.deck.shuffle();
+        this.pot = 0;
+    }
+    public void generateTable(int number){
+        if (number==1){
+            genFlop();
+        }
+        if (number==2){
+            genTurn();
+        }
+        if (number == 3){
+            genRiver();
+        }
+    }
 }

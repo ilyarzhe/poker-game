@@ -16,4 +16,9 @@ public class Hand {
     public Card getCard2(){
         return this.card2;
     }
+    @Override
+    public String toString(){
+        return String.format("%s %s,%s %s",this.card1.getCardName(),this.card1.getSuit(),this.card2.getCardName(),this.card2.getSuit());
+    }
 }
+

@@ -2,6 +2,7 @@ package models;
 
 import components.Poker;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,10 @@ public class Player {
     private int handScore;
     private boolean underTheGun;
 
+    private int lastBet;
+    private boolean checkedLastRound;
+    private boolean allIn;
+
     public Player(String name,
                   int stack,
                   boolean inGame,
@@ -24,6 +29,8 @@ public class Player {
         this.stack = stack;
         this.inGame = inGame;
         this.underTheGun = underTheGun;
+        this.lastBet = 0;
+        this.checkedLastRound = false;
     }
 
     public boolean isUnderTheGun() {
@@ -70,22 +77,61 @@ public class Player {
         this.underTheGun = underTheGun;
     }
 
+    public int getLastBet() {
+        return lastBet;
+    }
+
+    public void setLastBet(int lastBet) {
+        this.lastBet = lastBet;
+    }
+
+    public boolean isCheckedLastRound() {
+        return checkedLastRound;
+    }
+
+    public void setCheckedLastRound(boolean checkedLastRound) {
+        this.checkedLastRound = checkedLastRound;
+    }
+
+    public boolean isAllIn() {
+        return allIn;
+    }
+
+    public void setAllIn(boolean allIn) {
+        this.allIn = allIn;
+    }
+
     public void bet(int amount, Game game) {
         this.stack -= amount;
         game.addToPot(amount);
+        this.lastBet=amount;
+        this.checkedLastRound=false;
+        this.allIn=false;
+        this.inGame=true;
     }
 
     public void fold() {
         this.inGame = false;
+        this.checkedLastRound = false;
+        this.lastBet=0;
+        this.allIn=false;
     }
 
-    public boolean check() {
-        return true;
+    public void check() {
+        this.checkedLastRound = true;
+        this.lastBet=0;
+        this.inGame=true;
+        this.allIn=false;
     }
 
     public void allIn(Game game) {
-        this.stack -= this.stack;
-        game.addToPot(this.stack);
+        int bet = this.stack;
+        this.stack -= bet;
+        game.addToPot(bet);
+        this.lastBet=bet;
+        this.checkedLastRound=false;
+        this.inGame=true;
+        this.allIn = true;
     }
 
     public void winHand(Game game) {
@@ -106,11 +152,14 @@ public class Player {
 
     public ArrayList<Card> genFullTable(Game game) {
         ArrayList<Card> fullTable = game.getCardTable();
-        fullTable.add(this.getHand().getCard1());
-        fullTable.add(this.getHand().getCard2());
+        if (fullTable.size()==5) {
+            fullTable.add(this.getHand().getCard1());
+            fullTable.add(this.getHand().getCard2());
+        }
         return fullTable;
     }
     public HashMap<String,Integer> checkSuitCount(Game game){
+        Poker.buildSuitCountTracker();
         HashMap<String, Integer> suitCount = Poker.getSuitCountTracker();
         for (Card card :
                 this.genFullTable(game)) {
@@ -132,7 +181,7 @@ public class Player {
         return false;
 
     }
-    public ArrayList<Integer> getUniqueCardValueTable(Game game ,ArrayList<Card> cardTable){
+    public ArrayList<Integer> getUniqueCardValueTable(ArrayList<Card> cardTable){
         ArrayList<Integer> cardValuesOrdered = new ArrayList<>();
         for (Card card :cardTable) {
             cardValuesOrdered.add(card.getValue());
@@ -140,7 +189,7 @@ public class Player {
         }
         HashSet<Integer> cardValuesSet = new HashSet<>(cardValuesOrdered);
         ArrayList<Integer> cardValuesOrderedSet = new ArrayList<>(cardValuesSet);
-        if (cardValuesOrderedSet.get(cardValuesOrderedSet.size()-1)==14){
+        if (cardValuesOrderedSet.size()>0&&cardValuesOrderedSet.get(cardValuesOrderedSet.size()-1)==14){
             cardValuesOrderedSet.add(0,1);
         }
         return cardValuesOrderedSet;
@@ -154,13 +203,12 @@ public class Player {
         return 0;
     }
 
-    public boolean hasStraight(Game game,ArrayList<Card> cardList) {
-        return getHighestCardValueInAStraight(getUniqueCardValueTable(game,cardList))>0;
+    public boolean hasStraight(ArrayList<Card> cardList) {
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(cardList))>0;
     }
 
-    public HashMap<String, Integer> checkFrequency(Game game) {
+    public HashMap<String, Integer> checkFrequency(Game game,ArrayList<Card> fullTable) {
         HashMap<String,Integer> frequencyTable = Poker.getCardFrequencyTracker();
-        ArrayList<Card> fullTable = this.genFullTable(game);
         for (Card card : fullTable) {
             String cardName = card.getCardName();
             frequencyTable.replace(cardName, frequencyTable.get(cardName) + 1);
@@ -180,30 +228,35 @@ public class Player {
 
     }
 
-    public Integer countFrequencies(HashMap<String, Integer> frequencyTable, Integer targetFrequency) {
-        return Collections.frequency(frequencyTable.values(), targetFrequency);
+    public ArrayList<Integer> countFrequencies(HashMap<String,Integer> frequencyTable) {
+        ArrayList<Integer> frequencyCountTable = new ArrayList<>();
+        frequencyCountTable.add(Collections.frequency(frequencyTable.values(),2));
+        frequencyCountTable.add(Collections.frequency(frequencyTable.values(),3));
+        frequencyCountTable.add(Collections.frequency(frequencyTable.values(),4));
+        return frequencyCountTable;
     }
 
-    public boolean hasTwoPair(HashMap<String, Integer> frequencyTable) {
-        return countFrequencies(frequencyTable, 2) + countFrequencies(frequencyTable, 3) + countFrequencies(frequencyTable, 4) >= 2;
+
+
+    public Integer getMatchingComboCardValue(HashMap<String, Integer> frequencyTable,int target) {
+        for (String cardName : frequencyTable.keySet())
+            if (frequencyTable.get(cardName)==target){
+                return Poker.getCardValues().get(cardName);
+            }
+        return 0;
+    }
+    public Integer getFullHouseCardValue(HashMap<String,Integer> frequencyTable){
+        int score = 0;
+        for (String cardName : frequencyTable.keySet()){
+            if (frequencyTable.get(cardName)==3&&score<Poker.getCardFrequencyTracker().get(cardName)){
+                score = Poker.getCardFrequencyTracker().get(cardName);
+            }
+        }
+        return score;
     }
 
-    public boolean hasSet(HashMap<String, Integer> frequencyTable) {
-        return countFrequencies(frequencyTable, 3) + countFrequencies(frequencyTable, 4) >= 1;
-    }
-
-    public boolean hasQuads(HashMap<String, Integer> frequencyTable) {
-        return countFrequencies(frequencyTable, 4) >= 1;
-    }
-
-    public boolean hasFullHouse(HashMap<String, Integer> frequencyTable) {
-        int count2 = countFrequencies(frequencyTable, 2);
-        int count3 = countFrequencies(frequencyTable, 3);
-        int count4 = countFrequencies(frequencyTable, 4);
-        return  (count3>=1&&count2>=1)||(count2>=1&&count4>=1)||(count3>=1&&count4>=1);
-    }
     public boolean hasStraightFlush(Game game){
-        if (!hasFlush(game)||!hasStraight(game,genFullTable(game))){
+        if (!hasFlush(game)||!hasStraight(genFullTable(game))){
             return false;
         }
         return getHighestCardValueInAStraightFlush(game)>0;
@@ -221,25 +274,76 @@ public class Player {
         }
         return cardListSameSuit;
     }
+    public Integer getHighestCardValueInAFlush(ArrayList<Card> listofCardsInAFlush){
+        int max = 0;
+        for (Card card : listofCardsInAFlush){
+            if (card.getValue()>max){
+                max = card.getValue();
+            }
+        }
+        return max;
+    }
     public Integer getHighestCardValueInAStraightFlush(Game game) {
         ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(game);
-        return getHighestCardValueInAStraight(getUniqueCardValueTable(game, cardListSameSuit));
+        return getHighestCardValueInAStraight(getUniqueCardValueTable(cardListSameSuit));
     }
-    //TODO:HandScore function
+
     public Integer getHandScoreFromTable(Game game){
         ArrayList<Card> table = genFullTable(game);
-        HashMap<String,Integer> frequencyTable = checkFrequency(game);
+        HashMap<String,Integer> frequencyTable = checkFrequency(game,table);
+        ArrayList<Integer> frequencyCountTable = countFrequencies(frequencyTable);
+
 
         if(getHighestCardValueInAStraightFlush(game)!=0){
             setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(game));
             return getHandScore();
         }
+        if(frequencyCountTable.get(2)==1){
+            setHandScore(Poker.getCombinations().get("Quads")*14+getMatchingComboCardValue(frequencyTable,4)); //Think of something to get the quad value
+            return getHandScore();
+        }
+        if (frequencyCountTable.get(1)==2||(frequencyCountTable.get(1)==1&&frequencyCountTable.get(0)>=1)){
+            setHandScore(Poker.getCombinations().get("Full House")*14+getFullHouseCardValue(frequencyTable));
+            return getHandScore();
+        }
+        if (hasFlush(game)){
+            ArrayList<Card> listOfFlushCards = getListOfCardsInAFlush(game);
+            int score = getHighestCardValueInAFlush(listOfFlushCards);
+            setHandScore(Poker.getCombinations().get("Flush")*14+score);
+            return getHandScore();
+        }
+        if (getHighestCardValueInAStraight(getUniqueCardValueTable(table))>0){
+            int score = getHighestCardValueInAStraight(getUniqueCardValueTable(table));
+            setHandScore(Poker.getCombinations().get("Straight")*14+score);
+            return getHandScore();
+        }
+        if (frequencyCountTable.get(1)==1){
+            int score = getMatchingComboCardValue(frequencyTable,3);
+            setHandScore(Poker.getCombinations().get("Three of a Kind")*14+score);
+            return getHandScore();
+        }
+        if (frequencyCountTable.get(0)>=2){
+            int score = getMatchingComboCardValue(frequencyTable,2);
+            setHandScore(Poker.getCombinations().get("Two Pair")*14+score);
+            return getHandScore();
+        }
+        if (frequencyCountTable.get(0)==1){
+            int score = getMatchingComboCardValue(frequencyTable,2);
+            setHandScore(Poker.getCombinations().get("Pair")*14+score);
+            return getHandScore();
+        }
+        if (frequencyCountTable.get(0)==0){
+            int score = getMatchingComboCardValue(frequencyTable,1);
+            setHandScore(Poker.getCombinations().get("High Card")*14+score);
+            return getHandScore();
+        }
         return 0;
-
-        // Start generate highest card in a straight, highest card in flush and count frequencies
-        // Think of the best order to check combinations
-        // add a score to the combination based on the highest card
-
+    }
+    public void reset(){
+        this.underTheGun=!underTheGun;
+        this.lastBet=0;
+        this.allIn=false;
+        this.checkedLastRound=false;
     }
 
 
