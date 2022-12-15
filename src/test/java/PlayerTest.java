@@ -61,7 +61,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Spades", 13, "K"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasFlush(game)).isEqualTo(true);
+        assertThat(player1.hasFlush(player1.genFullTable(game))).isEqualTo(true);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Hearts", 11, "J"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasFlush(game)).isEqualTo(true);
+        assertThat(player1.hasFlush(player1.genFullTable(game))).isEqualTo(true);
     }
 
     @Test
@@ -103,7 +103,8 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 11, "J"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasFlush(game)).isEqualTo(false);
+        ArrayList<Card> table = player1.genFullTable(game);
+        assertThat(player1.hasFlush(table)).isEqualTo(false);
     }
 
     @Test
@@ -201,7 +202,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.checkFrequency(game, player1.genFullTable(game)).get("A")).isEqualTo(2);
+        assertThat(player1.checkFrequency(player1.genFullTable(game)).get("A")).isEqualTo(2);
     }
 
     @Test
@@ -215,7 +216,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
         player1.setHand(fakeHand);
-        assertThat(player1.checkFrequency(game, player1.genFullTable(game)).get("A")).isEqualTo(3);
+        assertThat(player1.checkFrequency(player1.genFullTable(game)).get("A")).isEqualTo(3);
     }
 
     @Test
@@ -229,7 +230,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 3, "3"));
         player1.setHand(fakeHand);
-        HashMap<String, Integer> actual = player1.checkFrequency(game, player1.genFullTable(game));
+        HashMap<String, Integer> actual = player1.checkFrequency( player1.genFullTable(game));
         assertThat(actual.get("A")).isEqualTo(2);
         assertThat(actual.get("3")).isEqualTo(2);
     }
@@ -245,7 +246,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
         player1.setHand(fakeHand);
-        HashMap<String, Integer> actual = player1.checkFrequency(game, player1.genFullTable(game));
+        HashMap<String, Integer> actual = player1.checkFrequency(player1.genFullTable(game));
         assertThat(actual.get("A")).isEqualTo(3);
         assertThat(actual.get("2")).isEqualTo(2);
     }
@@ -289,7 +290,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasPair(player1.checkFrequency(game, player1.genFullTable(game)))).isEqualTo(false);
+        assertThat(player1.hasPair(player1.checkFrequency(player1.genFullTable(game)))).isEqualTo(false);
     }
 
     @Test
@@ -413,7 +414,13 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Hearts", 9, "9"), new Card("Clubs", 8, "8"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraightFlush(game)).isEqualTo(false);
+        System.out.println(player1.genFullTable(game));
+        System.out.println(player1.getHandScoreFromTable(game));
+        Player player2 = new Player("Harry",100,true,false);
+        player2.setHand(new Hand(new Card("Clubs",10,"10"),new Card("Clubs",9,"9")));
+        System.out.println(player2.getHand());
+        System.out.println(player2.genFullTable(game));
+        System.out.println(player2.getHandScoreFromTable(game));
     }
 
     //    @Disabled

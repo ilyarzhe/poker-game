@@ -13,17 +13,30 @@ public class App {
         startGame();
         Game game = new Game();
         Scanner scanner = new Scanner(System.in);
-        Player player1 = generatePlayer(scanner,1);
-        Player player2 = generatePlayer(scanner, 2);
-        player1.drawHand(game);
-        player2.drawHand(game);
-        int roundCount = 1;
-        while (roundCount<5){
-            if (player1.isInGame()&&player2.isInGame()) {
+//      TOdo: three lines below are removed for testing purposes
+//        Player player1 = generatePlayer(scanner,1);
+//        Player player2 = generatePlayer(scanner, 2);
+        Player player1 = new Player("Henry",100,true,true);
+        Player player2 = new Player("Slava",100,true,false);
+
+
+        while (player1.getStack()>0&&player2.getStack()>0) {
+            player1.drawHand(game);
+            player2.drawHand(game);
+            int roundCount = 1;
+            while (roundCount < 5) {
+                System.out.println("This round:"+roundCount);
                 startRoundOfBetting(player1, player2, game, scanner, roundCount);
-                game.generateTable(roundCount);
-                roundCount++;
+                if (player1.isInGame() && player2.isInGame()) {
+                    game.generateTable(roundCount);
+                    roundCount++;
+                } else {
+                    break;
+                }
+
             }
+            decideWinner(game, player1, player2);
+            gameReset(game, player1, player2);
         }
 
 
@@ -59,6 +72,7 @@ public class App {
     private static void startRoundOfBetting(Player player1,Player player2, Game game,Scanner scanner,int roundNumber){
         Player tempPlayer1 = player1;
         Player tempPlayer2 = player2;
+        //TODO:this needs serious simplification, not very DRY!!!!!!
         if ((tempPlayer1.isUnderTheGun()&&roundNumber%2==1)||(!tempPlayer1.isUnderTheGun()&&roundNumber%2==0)){
             starterRoundOfAction(game,tempPlayer1,scanner,roundNumber);
             do {
@@ -67,18 +81,17 @@ public class App {
                 Player extra = tempPlayer1;
                 tempPlayer1 = tempPlayer2;
                 tempPlayer2 = extra;
-            } while(tempPlayer2.getLastBet()!=tempPlayer1.getLastBet()&&tempPlayer1.isInGame()&&tempPlayer2.isInGame());
+            } while(checkConditionforBetting(tempPlayer1,tempPlayer2));
             //here the response of player 1
             // here we will have the response of player two
-        }
-        if ((tempPlayer2.isUnderTheGun()&&roundNumber%2==1)||(!tempPlayer2.isUnderTheGun()&&roundNumber%2==0)){
+        } else if ((tempPlayer2.isUnderTheGun()&&roundNumber%2==1)||(!tempPlayer2.isUnderTheGun()&&roundNumber%2==0)){
             starterRoundOfAction(game,tempPlayer2,scanner,roundNumber);
             do {
                 responseAction(game, tempPlayer1, tempPlayer2, scanner);
                 Player extra = tempPlayer1;
                 tempPlayer1 = tempPlayer2;
                 tempPlayer2 = extra;
-            } while(tempPlayer2.getLastBet()!=tempPlayer1.getLastBet()&&tempPlayer1.isInGame()&&tempPlayer2.isInGame());
+            } while(checkConditionforBetting(tempPlayer1,tempPlayer2));
             //here the response of player 1
         }
         if (Objects.equals(tempPlayer1.getName(), player1.getName())){
@@ -88,9 +101,8 @@ public class App {
             player1 = tempPlayer2;
             player2 = tempPlayer1;
         }
-        System.out.println(player1.getName());
-        System.out.println(player2.getName());
-        System.out.printf("The pot is %s",game.getPot());
+        System.out.printf("The pot is %s\n",game.getPot());
+        System.out.println("-".repeat(10));
     }
     private static void starterRoundOfAction(Game game,Player player,Scanner scanner,int roundNumber){
         displayUI(game,player,scanner,roundNumber>1);
@@ -123,7 +135,7 @@ public class App {
     }
 
     private static void allInResponse(Game game, Player you,Player opponent,Scanner scanner){
-        System.out.printf("%s is all in!",opponent.getName());
+        System.out.printf("%s is all in!\n",opponent.getName());
         displayUI(game,you,scanner,false);
         System.out.println("(allin or fold):");
         String action = scanner.nextLine();
@@ -131,9 +143,9 @@ public class App {
         checkPlayFold(game,you,action,scanner);
     }
     private static void checkInResponse(Game game, Player you, Player opponent,Scanner scanner){
-        System.out.printf("%s has checked!",opponent.getName());
+        System.out.printf("%s has checked!\n",opponent.getName());
         displayUI(game,you,scanner,false);
-        System.out.println("(bet,fold,allin or call)");
+        System.out.println("(bet,fold,check or allin)");
         String action = scanner.nextLine();
         checkPlayAllIn(game,you,action,scanner);
         checkPlayFold(game,you,action,scanner);
@@ -141,12 +153,13 @@ public class App {
         checkPlayCheck(game,you,action,scanner);
     }
     private static void foldResponse(Game game,Player you,Player opponent,Scanner scanner){
-        System.out.printf("%s has folded!, You won",opponent.getName());
+        System.out.printf("%s has folded!, You won\n",opponent.getName());
         you.winHand(game);
-        game.reset();
+        gameReset(game,you,opponent);
+
     }
     private static void betResponse(Game game, Player you, Player opponent,Scanner scanner){
-        System.out.printf("%s put in a %d bet!",opponent.getName(),opponent.getLastBet());
+        System.out.printf("%s put in a %d bet!\n",opponent.getName(),opponent.getLastBet());
         displayUI(game,you,scanner,false);
         System.out.println("(call or fold):");
         String action = scanner.nextLine();
@@ -169,12 +182,14 @@ public class App {
         return num;
     }
     private static void displayUI(Game game,Player player,Scanner scanner,boolean flop) {
+        System.out.println("-".repeat(10));
+        System.out.printf("%s, your Turn!\n",player.getName());
         if (flop) {
             System.out.println("\nCommunity Cards:");
             System.out.println(game.getCardTable());
         }
-        System.out.println("Your Hand:");
-        System.out.println(player.getHand().toString());
+        System.out.println("\nYour Hand:");
+        System.out.println(player.getHand().toString()+"\n");
         System.out.println("Your turn for action!");
     }
     private static void checkPlayBet(Game game,Player player, String action,Scanner scanner){
@@ -206,13 +221,45 @@ public class App {
     private static void decideWinner(Game game, Player player1, Player player2){
         int player1Score = player1.getHandScoreFromTable(game);
         int player2Score = player2.getHandScoreFromTable(game);
+        System.out.println(player1Score);
+        System.out.println(player2Score);
+        System.out.println("-".repeat(10));
         if (player1Score>player2Score){
             player1.winHand(game);
-            game.reset();
-            player1.reset();
-            player2.reset();
-            System.out.printf("%s, you have won!",player1.getName());
+            winnerOutput(game,player1);
         }
+        if (player2Score>player1Score) {
+            player2.winHand(game);
+            winnerOutput(game,player2);
+        }
+    }
+    private static void gameReset(Game game, Player  player1, Player player2){
+        game.reset();
+        player1.reset();
+        player2.reset();
+        Poker.buildSuitCountTracker();
+        Poker.buildCardFrequencyTracker();
+    }
+    private static void winnerOutput(Game game, Player player){
+        int combination = (player.getHandScore()-(player.getHandScore()%14))/14;
+        System.out.printf("%s, you have won\n",player.getName());
+        System.out.printf("You had : %s\n",Poker.getCombinationsScoreReverse().get(combination));
+    }
+    private static void fullGameDecision(Player player1,Player player2){
+        String winnerName="";
+        if (player1.getStack()==0){
+            winnerName=player2.getName();
+        }
+        if (player2.getStack()==0){
+            winnerName = player1.getName();
+        }
+        System.out.printf("Congrats %s. You have won the game\n",winnerName);
+    }
+    public static boolean checkConditionforBetting(Player player1,Player player2){
+        boolean bothInGame = player1.isInGame()&&player2.isInGame();
+        boolean sameLastBet = player1.getLastBet()!=player2.getLastBet();
+        boolean EitherNoCheck = !player1.isCheckedLastRound()||!player2.isCheckedLastRound();
+        return bothInGame&&sameLastBet&&EitherNoCheck;
     }
 //    private static void checkPlayBet(Player player, Scanner scanner){}, implement this later
 }

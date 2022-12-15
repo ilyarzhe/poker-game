@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class Poker {
     private static HashMap<String,Integer> combinationsScore = new HashMap<>();
+    private static HashMap<Integer,String> combinationsScoreReverse = new HashMap<>();
     private static ArrayList<String> suits = new ArrayList<>();
     private static HashMap<String,Integer> cardValues = new HashMap<>();
     private static HashMap<String,Integer> suitCountTracker = new HashMap<>();
@@ -29,6 +30,10 @@ public class Poker {
         return suitCountTracker;
     }
 
+    public static HashMap<Integer, String> getCombinationsScoreReverse() {
+        return combinationsScoreReverse;
+    }
+
     public static void buildCombinations(){
         ArrayList<String> combinations = new ArrayList<>();
         combinations.add("High Card");
@@ -42,6 +47,7 @@ public class Poker {
         combinations.add("Straight Flush");
         for (int i = 0; i< combinations.size(); i++){
             combinationsScore.put(combinations.get(i),i);
+            combinationsScoreReverse.put(i, combinations.get(i));
         }
     }
     public static void buildSuits(){
@@ -52,25 +58,27 @@ public class Poker {
     }
 
     public static void buildCardValues(){
+        HashMap<String,Integer> cardValuesExtra= new HashMap<>();
         for ( int i =0; i<13;i++){
             switch (i){
                 case 9:
-                    cardValues.put("J",i+2);
+                    cardValuesExtra.put("J",i+2);
                     break;
                 case 10:
-                    cardValues.put("Q",i+2);
+                    cardValuesExtra.put("Q",i+2);
                     break;
                 case 11:
-                    cardValues.put("K",i+2);
+                    cardValuesExtra.put("K",i+2);
                     break;
                 case 12:
-                    cardValues.put("A",i+2);
+                    cardValuesExtra.put("A",i+2);
                     break;
                 default:
-                    cardValues.put(Integer.toString(i+2),i+2);
+                    cardValuesExtra.put(Integer.toString(i+2),i+2);
                     break;
             }
         }
+        cardValues = cardValuesExtra;
     }
     public static void buildSuitCountTracker(){
         for (String key : getSuits()){

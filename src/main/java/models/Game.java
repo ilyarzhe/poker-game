@@ -59,6 +59,7 @@ public class Game {
         this.pot+=amount;
     }
     public void reset(){
+        this.cardTable= new ArrayList<>();
         this.deck.shuffle();
         this.pot = 0;
     }

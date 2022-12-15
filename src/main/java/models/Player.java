@@ -2,7 +2,6 @@ package models;
 
 import components.Poker;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +30,7 @@ public class Player {
         this.underTheGun = underTheGun;
         this.lastBet = 0;
         this.checkedLastRound = false;
+        this.handScore=0;
     }
 
     public boolean isUnderTheGun() {
@@ -158,20 +158,18 @@ public class Player {
         }
         return fullTable;
     }
-    public HashMap<String,Integer> checkSuitCount(Game game){
-        Poker.buildSuitCountTracker();
+    public HashMap<String,Integer> checkSuitCount(ArrayList<Card> fullTable){
         HashMap<String, Integer> suitCount = Poker.getSuitCountTracker();
-        for (Card card :
-                this.genFullTable(game)) {
+        for (Card card :fullTable) {
             String cardSuit = card.getSuit();
             suitCount.replace(cardSuit, suitCount.get(cardSuit) + 1);
         }
         return suitCount;
     }
 
-    public boolean hasFlush(Game game) {
+    public boolean hasFlush(ArrayList<Card> fullTable) {
         for (Integer suitCount  :
-                this.checkSuitCount(game).values()) {
+                this.checkSuitCount(fullTable).values()) {
             if (suitCount>=5){
                 return true;
             }
@@ -207,7 +205,7 @@ public class Player {
         return getHighestCardValueInAStraight(getUniqueCardValueTable(cardList))>0;
     }
 
-    public HashMap<String, Integer> checkFrequency(Game game,ArrayList<Card> fullTable) {
+    public HashMap<String, Integer> checkFrequency(ArrayList<Card> fullTable) {
         HashMap<String,Integer> frequencyTable = Poker.getCardFrequencyTracker();
         for (Card card : fullTable) {
             String cardName = card.getCardName();
@@ -255,16 +253,9 @@ public class Player {
         return score;
     }
 
-    public boolean hasStraightFlush(Game game){
-        if (!hasFlush(game)||!hasStraight(genFullTable(game))){
-            return false;
-        }
-        return getHighestCardValueInAStraightFlush(game)>0;
 
-    }
-    public ArrayList<Card> getListOfCardsInAFlush(Game game){
-        HashMap<String, Integer> suitCount = checkSuitCount(game);
-        ArrayList<Card> fullTable = genFullTable(game);
+    public ArrayList<Card> getListOfCardsInAFlush(ArrayList<Card> fullTable){
+        HashMap<String, Integer> suitCount = checkSuitCount(fullTable);
         ArrayList<Card> cardListSameSuit = new ArrayList<>();
         for (int i =0; i<fullTable.size();i++){
             String cardSuit = fullTable.get(i).getSuit();
@@ -283,19 +274,20 @@ public class Player {
         }
         return max;
     }
-    public Integer getHighestCardValueInAStraightFlush(Game game) {
-        ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(game);
+    public Integer getHighestCardValueInAStraightFlush(Game game,ArrayList<Card> fullTable) {
+        ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(fullTable);
         return getHighestCardValueInAStraight(getUniqueCardValueTable(cardListSameSuit));
     }
 
     public Integer getHandScoreFromTable(Game game){
         ArrayList<Card> table = genFullTable(game);
-        HashMap<String,Integer> frequencyTable = checkFrequency(game,table);
+        HashMap<String,Integer> frequencyTable = checkFrequency(table);
         ArrayList<Integer> frequencyCountTable = countFrequencies(frequencyTable);
 
 
-        if(getHighestCardValueInAStraightFlush(game)!=0){
-            setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(game));
+
+        if(getHighestCardValueInAStraightFlush(game,table)!=0){
+            setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(game,table));
             return getHandScore();
         }
         if(frequencyCountTable.get(2)==1){
@@ -306,8 +298,8 @@ public class Player {
             setHandScore(Poker.getCombinations().get("Full House")*14+getFullHouseCardValue(frequencyTable));
             return getHandScore();
         }
-        if (hasFlush(game)){
-            ArrayList<Card> listOfFlushCards = getListOfCardsInAFlush(game);
+        if (hasFlush(table)){
+            ArrayList<Card> listOfFlushCards = getListOfCardsInAFlush(table);
             int score = getHighestCardValueInAFlush(listOfFlushCards);
             setHandScore(Poker.getCombinations().get("Flush")*14+score);
             return getHandScore();
@@ -344,6 +336,7 @@ public class Player {
         this.lastBet=0;
         this.allIn=false;
         this.checkedLastRound=false;
+        this.handScore=0;
     }
 
 
