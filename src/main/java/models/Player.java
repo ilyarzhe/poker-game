@@ -151,15 +151,15 @@ public class Player {
     }
 
     public ArrayList<Card> genFullTable(Game game) {
-        ArrayList<Card> fullTable = game.getCardTable();
+        ArrayList<Card> fullTable = new ArrayList<>(game.getCardTable());
         if (fullTable.size()==5) {
-            fullTable.add(this.getHand().getCard1());
-            fullTable.add(this.getHand().getCard2());
+            fullTable.add(this.hand.getCard1());
+            fullTable.add(this.hand.getCard2());
         }
         return fullTable;
     }
     public HashMap<String,Integer> checkSuitCount(ArrayList<Card> fullTable){
-        HashMap<String, Integer> suitCount = Poker.getSuitCountTracker();
+        HashMap<String, Integer> suitCount = new HashMap<>(Poker.getSuitCountTracker());
         for (Card card :fullTable) {
             String cardSuit = card.getSuit();
             suitCount.replace(cardSuit, suitCount.get(cardSuit) + 1);
@@ -168,6 +168,7 @@ public class Player {
     }
 
     public boolean hasFlush(ArrayList<Card> fullTable) {
+        System.out.println(checkSuitCount(fullTable));
         for (Integer suitCount  :
                 this.checkSuitCount(fullTable).values()) {
             if (suitCount>=5){
@@ -206,7 +207,7 @@ public class Player {
     }
 
     public HashMap<String, Integer> checkFrequency(ArrayList<Card> fullTable) {
-        HashMap<String,Integer> frequencyTable = Poker.getCardFrequencyTracker();
+        HashMap<String,Integer> frequencyTable = new HashMap<>(Poker.getCardFrequencyTracker());
         for (Card card : fullTable) {
             String cardName = card.getCardName();
             frequencyTable.replace(cardName, frequencyTable.get(cardName) + 1);

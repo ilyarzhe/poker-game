@@ -27,10 +27,6 @@ public class PlayerTest {
         Poker.buildCardFrequencyTracker();
         player1 = new Player("Henry", 100, true, true);
         game = new Game();
-        deck = new Deck();
-        game.genFlop();
-        game.genTurn();
-        game.genRiver();
     }
 
     @Test
@@ -414,13 +410,14 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Hearts", 9, "9"), new Card("Clubs", 8, "8"));
         player1.setHand(fakeHand);
-        System.out.println(player1.genFullTable(game));
+
         System.out.println(player1.getHandScoreFromTable(game));
+        System.out.println(game.getCardTable());
+
         Player player2 = new Player("Harry",100,true,false);
         player2.setHand(new Hand(new Card("Clubs",10,"10"),new Card("Clubs",9,"9")));
-        System.out.println(player2.getHand());
-        System.out.println(player2.genFullTable(game));
         System.out.println(player2.getHandScoreFromTable(game));
+        System.out.println(game.getCardTable());
     }
 
     //    @Disabled
