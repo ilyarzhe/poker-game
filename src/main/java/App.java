@@ -1,11 +1,8 @@
 import components.Actions;
 import components.Poker;
-import models.Deck;
 import models.Game;
 import models.Player;
 
-import javax.swing.*;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class App {
@@ -77,7 +74,7 @@ public class App {
             starterRoundOfAction(game,tempPlayer1,scanner,roundNumber);
             do {
 
-                responseAction(game, tempPlayer2, tempPlayer1, scanner);
+                responseAction(game, tempPlayer2, tempPlayer1, scanner,roundNumber);
                 Player extra = tempPlayer1;
                 tempPlayer1 = tempPlayer2;
                 tempPlayer2 = extra;
@@ -87,7 +84,7 @@ public class App {
         } else if ((tempPlayer2.isUnderTheGun()&&roundNumber%2==1)||(!tempPlayer2.isUnderTheGun()&&roundNumber%2==0)){
             starterRoundOfAction(game,tempPlayer2,scanner,roundNumber);
             do {
-                responseAction(game, tempPlayer1, tempPlayer2, scanner);
+                responseAction(game, tempPlayer1, tempPlayer2, scanner,roundNumber);
                 Player extra = tempPlayer1;
                 tempPlayer1 = tempPlayer2;
                 tempPlayer2 = extra;
@@ -117,34 +114,34 @@ public class App {
 
 
     }
-    private static void responseAction(Game game, Player you,Player opponent,Scanner scanner){
+    private static void responseAction(Game game, Player you,Player opponent,Scanner scanner,int roundNumber){
         // check what was previous player's action
         // construct a response function based on the action
         if (opponent.isAllIn()){
-            allInResponse(game,you,opponent,scanner);
+            allInResponse(game,you,opponent,scanner,roundNumber);
         }
         if (opponent.isCheckedLastRound()){
-            checkInResponse(game,you,opponent,scanner);
+            checkInResponse(game,you,opponent,scanner,roundNumber);
         }
         if (!opponent.isInGame()){
             foldResponse(game,you,opponent,scanner);
         }
         if (opponent.getLastBet()>0){
-            betResponse(game,you,opponent,scanner);
+            betResponse(game,you,opponent,scanner,roundNumber);
         }
     }
 
-    private static void allInResponse(Game game, Player you,Player opponent,Scanner scanner){
+    private static void allInResponse(Game game, Player you,Player opponent,Scanner scanner,int roundNumber){
         System.out.printf("%s is all in!\n",opponent.getName());
-        displayUI(game,you,scanner,false);
+        displayUI(game,you,scanner,roundNumber>1);
         System.out.println("(allin or fold):");
         String action = scanner.nextLine();
         checkPlayAllIn(game,you,action,scanner);
         checkPlayFold(game,you,action,scanner);
     }
-    private static void checkInResponse(Game game, Player you, Player opponent,Scanner scanner){
+    private static void checkInResponse(Game game, Player you, Player opponent,Scanner scanner, int roundNumber){
         System.out.printf("%s has checked!\n",opponent.getName());
-        displayUI(game,you,scanner,false);
+        displayUI(game,you,scanner,roundNumber>1);
         System.out.println("(bet,fold,check or allin)");
         String action = scanner.nextLine();
         checkPlayAllIn(game,you,action,scanner);
@@ -158,9 +155,9 @@ public class App {
         gameReset(game,you,opponent);
 
     }
-    private static void betResponse(Game game, Player you, Player opponent,Scanner scanner){
+    private static void betResponse(Game game, Player you, Player opponent,Scanner scanner,int roundNumber){
         System.out.printf("%s put in a %d bet!\n",opponent.getName(),opponent.getLastBet());
-        displayUI(game,you,scanner,false);
+        displayUI(game,you,scanner,roundNumber>1);
         System.out.println("(call or fold):");
         String action = scanner.nextLine();
         checkPlayCall(game,you,opponent,action,scanner);
