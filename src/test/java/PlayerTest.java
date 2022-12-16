@@ -57,7 +57,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Spades", 13, "K"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasFlush(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(5*14+13);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Hearts", 11, "J"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasFlush(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(5*14+13);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PlayerTest {
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 11, "J"));
         player1.setHand(fakeHand);
         ArrayList<Card> table = player1.genFullTable(game);
-        assertThat(player1.hasFlush(table)).isEqualTo(false);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(14);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(4*14+10);
     }
 
     @Test
@@ -128,7 +128,8 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 7, "7"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(4*14+10);
+
     }
 
     @Test
@@ -138,11 +139,11 @@ public class PlayerTest {
         fakeTable.add(new Card("Clubs", 7, "7"));
         fakeTable.add(new Card("Diamonds", 9, "9"));
         fakeTable.add(new Card("Hearts", 7, "7"));
-        fakeTable.add(new Card("Spades", 6, "6"));
+        fakeTable.add(new Card("Spades", 5, "5"));
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 8, "8"), new Card("Clubs", 6, "6"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(4*14+10);
     }
 
     @Test
@@ -156,7 +157,8 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 2, "2"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(player1.genFullTable(game))).isEqualTo(false);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(14);
+
     }
 
     @Test
@@ -170,7 +172,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasStraight(player1.genFullTable(game))).isEqualTo(true);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(5+4*14);
     }
 
     @Test
@@ -193,12 +195,12 @@ public class PlayerTest {
         fakeTable.add(new Card("Hearts", 14, "A"));
         fakeTable.add(new Card("Clubs", 2, "2"));
         fakeTable.add(new Card("Diamonds", 3, "3"));
-        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Hearts", 6, "6"));
         fakeTable.add(new Card("Spades", 5, "5"));
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.checkFrequency(player1.genFullTable(game)).get("A")).isEqualTo(2);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(14+14     );
     }
 
     @Test
@@ -206,14 +208,15 @@ public class PlayerTest {
         ArrayList<Card> fakeTable = new ArrayList<>();
         fakeTable.add(new Card("Hearts", 14, "A"));
         fakeTable.add(new Card("Clubs", 2, "2"));
-        fakeTable.add(new Card("Diamonds", 3, "3"));
+        fakeTable.add(new Card("Diamonds", 6, "6"));
         fakeTable.add(new Card("Hearts", 4, "4"));
         fakeTable.add(new Card("Spades", 5, "5"));
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
         player1.setHand(fakeHand);
-        assertThat(player1.checkFrequency(player1.genFullTable(game)).get("A")).isEqualTo(3);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(3*14+14);
     }
+
 
     @Test
     public void ReturnCardFrequency__TwoPair() {
@@ -221,14 +224,12 @@ public class PlayerTest {
         fakeTable.add(new Card("Hearts", 14, "A"));
         fakeTable.add(new Card("Clubs", 2, "2"));
         fakeTable.add(new Card("Diamonds", 3, "3"));
-        fakeTable.add(new Card("Hearts", 4, "4"));
+        fakeTable.add(new Card("Hearts", 6, "6"));
         fakeTable.add(new Card("Spades", 5, "5"));
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 3, "3"));
         player1.setHand(fakeHand);
-        HashMap<String, Integer> actual = player1.checkFrequency( player1.genFullTable(game));
-        assertThat(actual.get("A")).isEqualTo(2);
-        assertThat(actual.get("3")).isEqualTo(2);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(2*14+14);
     }
 
     @Test
@@ -242,9 +243,7 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 14, "A"), new Card("Clubs", 14, "A"));
         player1.setHand(fakeHand);
-        HashMap<String, Integer> actual = player1.checkFrequency(player1.genFullTable(game));
-        assertThat(actual.get("A")).isEqualTo(3);
-        assertThat(actual.get("2")).isEqualTo(2);
+        assertThat(player1.getHandScoreFromTable(game)).isEqualTo(6*14+14);
     }
 
     @Test
@@ -286,7 +285,6 @@ public class PlayerTest {
         game.setCardTable(fakeTable);
         Hand fakeHand = new Hand(new Card("Spades", 13, "K"), new Card("Clubs", 12, "Q"));
         player1.setHand(fakeHand);
-        assertThat(player1.hasPair(player1.checkFrequency(player1.genFullTable(game)))).isEqualTo(false);
     }
 
     @Test

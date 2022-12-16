@@ -168,7 +168,6 @@ public class Player {
     }
 
     public boolean hasFlush(ArrayList<Card> fullTable) {
-        System.out.println(checkSuitCount(fullTable));
         for (Integer suitCount  :
                 this.checkSuitCount(fullTable).values()) {
             if (suitCount>=5){
@@ -202,9 +201,6 @@ public class Player {
         return 0;
     }
 
-    public boolean hasStraight(ArrayList<Card> cardList) {
-        return getHighestCardValueInAStraight(getUniqueCardValueTable(cardList))>0;
-    }
 
     public HashMap<String, Integer> checkFrequency(ArrayList<Card> fullTable) {
         HashMap<String,Integer> frequencyTable = new HashMap<>(Poker.getCardFrequencyTracker());
@@ -217,15 +213,7 @@ public class Player {
 
     }
 
-    public boolean hasPair(HashMap<String, Integer> frequencyTable) {
-        for (int cardCount : frequencyTable.values()) {
-            if (cardCount >= 2) {
-                return true;
-            }
-        }
-        return false;
 
-    }
 
     public ArrayList<Integer> countFrequencies(HashMap<String,Integer> frequencyTable) {
         ArrayList<Integer> frequencyCountTable = new ArrayList<>();
@@ -247,8 +235,8 @@ public class Player {
     public Integer getFullHouseCardValue(HashMap<String,Integer> frequencyTable){
         int score = 0;
         for (String cardName : frequencyTable.keySet()){
-            if (frequencyTable.get(cardName)==3&&score<Poker.getCardFrequencyTracker().get(cardName)){
-                score = Poker.getCardFrequencyTracker().get(cardName);
+            if (frequencyTable.get(cardName)==3&&score<Poker.getCardValues().get(cardName)){
+                score = Poker.getCardValues().get(cardName);
             }
         }
         return score;
