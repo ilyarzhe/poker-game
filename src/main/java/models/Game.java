@@ -74,4 +74,8 @@ public class Game {
             genRiver();
         }
     }
+    public void tie(Player player1, Player player2){
+        player1.setStack(player1.getStack()+this.pot/2);
+        player2.setStack(player2.getStack()+this.pot/2);
+    }
 }

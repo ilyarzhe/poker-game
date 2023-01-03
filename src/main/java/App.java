@@ -6,11 +6,11 @@ import models.Player;
 import java.util.*;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         startGame();
         Game game = new Game();
         Scanner scanner = new Scanner(System.in);
-//      TOdo: three lines below are removed for testing purposes
+//      two lines below are removed for testing purposes
 //        Player player1 = generatePlayer(scanner,1);
 //        Player player2 = generatePlayer(scanner, 2);
         Player player1 = new Player("Henry",100,true,true);
@@ -66,7 +66,7 @@ public class App {
         scanner.nextLine();
         return new Player(playerName,playerStack,true,number==1);
     }
-    private static void startRoundOfBetting(Player player1,Player player2, Game game,Scanner scanner,int roundNumber){
+    private static void startRoundOfBetting(Player player1,Player player2, Game game,Scanner scanner,int roundNumber) throws Exception {
         Player tempPlayer1 = player1;
         Player tempPlayer2 = player2;
         //TODO:this needs serious simplification, not very DRY!!!!!!
@@ -114,7 +114,7 @@ public class App {
 
 
     }
-    private static void responseAction(Game game, Player you,Player opponent,Scanner scanner,int roundNumber){
+    private static void responseAction(Game game, Player you,Player opponent,Scanner scanner,int roundNumber) throws Exception {
         // check what was previous player's action
         // construct a response function based on the action
         if (opponent.isAllIn()){
@@ -155,7 +155,7 @@ public class App {
         gameReset(game,you,opponent);
 
     }
-    private static void betResponse(Game game, Player you, Player opponent,Scanner scanner,int roundNumber){
+    private static void betResponse(Game game, Player you, Player opponent,Scanner scanner,int roundNumber) throws Exception {
         System.out.printf("%s put in a %d bet!\n",opponent.getName(),opponent.getLastBet());
         displayUI(game,you,scanner,roundNumber>1);
         System.out.println("(call or fold):");
@@ -191,8 +191,17 @@ public class App {
     }
     private static void checkPlayBet(Game game,Player player, String action,Scanner scanner){
         if (action.equalsIgnoreCase(Actions.BET.toString())){
-            int betSize = inputNumber(scanner);
-            player.bet(betSize,game);
+            boolean betGoneThrough = false;
+            while(!betGoneThrough) {
+                try {
+                    int betSize = inputNumber(scanner);
+                    player.bet(betSize, game);
+                    betGoneThrough=true;
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
     private static void checkPlayFold(Game game,Player player, String action,Scanner scanner){
@@ -210,7 +219,7 @@ public class App {
             player.allIn(game);
         }
     }
-    private static void checkPlayCall(Game game,Player player,Player opponent, String action,Scanner scanner){
+    private static void checkPlayCall(Game game,Player player,Player opponent, String action,Scanner scanner) throws Exception {
         if (action.equalsIgnoreCase(Actions.CALL.toString())){
             player.bet(opponent.getLastBet(),game);
         }
@@ -228,6 +237,9 @@ public class App {
         if (player2Score>player1Score) {
             player2.winHand(game);
             winnerOutput(game,player2);
+        }
+        if (player1Score==player2Score){
+            game.tie(player1,player2);
         }
     }
     private static void gameReset(Game game, Player  player1, Player player2){

@@ -101,7 +101,12 @@ public class Player {
         this.allIn = allIn;
     }
 
-    public void bet(int amount, Game game) {
+    public void bet(int amount, Game game) throws Exception {
+        if (amount>this.stack){
+            System.out.printf("The stack:%s\n",this.stack);
+            throw new Exception("Error, You can't bet more than the stack amount. Try again!");
+
+        }
         this.stack -= amount;
         game.addToPot(amount);
         this.lastBet=amount;
@@ -263,7 +268,7 @@ public class Player {
         }
         return max;
     }
-    public Integer getHighestCardValueInAStraightFlush(Game game,ArrayList<Card> fullTable) {
+    public Integer getHighestCardValueInAStraightFlush(ArrayList<Card> fullTable) {
         ArrayList<Card> cardListSameSuit = getListOfCardsInAFlush(fullTable);
         return getHighestCardValueInAStraight(getUniqueCardValueTable(cardListSameSuit));
     }
@@ -275,8 +280,8 @@ public class Player {
 
 
 
-        if(getHighestCardValueInAStraightFlush(game,table)!=0){
-            setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(game,table));
+        if(getHighestCardValueInAStraightFlush(table)!=0){
+            setHandScore(Poker.getCombinations().get("Straight Flush")*14+getHighestCardValueInAStraightFlush(table));
             return getHandScore();
         }
         if(frequencyCountTable.get(2)==1){
