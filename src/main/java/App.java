@@ -16,14 +16,15 @@ public class App {
         Player player1 = new Player("Henry",100,true,true);
         Player player2 = new Player("Slava",100,true,false);
 
-
         while (player1.getStack()>0&&player2.getStack()>0) {
             player1.drawHand(game);
             player2.drawHand(game);
             int roundCount = 1;
             while (roundCount < 5) {
                 System.out.println("This round:"+roundCount);
-                startRoundOfBetting(player1, player2, game, scanner, roundCount);
+                if (!player1.isAllIn()&&!player2.isAllIn()) {
+                    startRoundOfBetting(player1, player2, game, scanner, roundCount);
+                }
                 if (player1.isInGame() && player2.isInGame()) {
                     game.generateTable(roundCount);
                     roundCount++;
@@ -35,6 +36,7 @@ public class App {
             decideWinner(game, player1, player2);
             gameReset(game, player1, player2);
         }
+        decideEntireGameWinner(player1,player2);
 
 
 
@@ -266,9 +268,15 @@ public class App {
     }
     public static boolean checkConditionforBetting(Player player1,Player player2){
         boolean bothInGame = player1.isInGame()&&player2.isInGame();
-        boolean sameLastBet = player1.getLastBet()!=player2.getLastBet();
+        boolean differentLastBet = player1.getLastBet()!=player2.getLastBet();
         boolean EitherNoCheck = !player1.isCheckedLastRound()||!player2.isCheckedLastRound();
-        return bothInGame&&sameLastBet&&EitherNoCheck;
+        boolean bothNotAllIn=!player1.isAllIn()&&!player2.isAllIn();
+        return bothInGame&&differentLastBet&&EitherNoCheck&&bothNotAllIn;
     }
 //    private static void checkPlayBet(Player player, Scanner scanner){}, implement this later
+    private static void decideEntireGameWinner(Player player1, Player player2){
+        Player winner = player1.getStack()==0?player2:player1;
+        System.out.println("The Game ended!");
+        System.out.printf("Congratulations, %s, you won the Game!",winner.getName());
+    }
 }

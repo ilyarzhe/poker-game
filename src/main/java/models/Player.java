@@ -31,6 +31,7 @@ public class Player {
         this.lastBet = 0;
         this.checkedLastRound = false;
         this.handScore=0;
+        this.allIn=false;
     }
 
     public boolean isUnderTheGun() {
