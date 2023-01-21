@@ -28,8 +28,8 @@ public class AppTest {
     }
     @Test
     public void firstTest(){
-        player1.bet(10,game);
-        player2.bet( 10,game);
+        player1.allIn(game);
+        player2.allIn(game);
         assertFalse(App.checkConditionforBetting(player1, player2));
     }
 }
