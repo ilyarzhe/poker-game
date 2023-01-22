@@ -27,6 +27,7 @@ public class App {
                 }
                 if (player1.isInGame() && player2.isInGame()) {
                     game.generateTable(roundCount);
+                    System.out.println(game.getCardTable());
                     roundCount++;
                 } else {
                     break;
@@ -71,24 +72,20 @@ public class App {
     private static void startRoundOfBetting(Player player1,Player player2, Game game,Scanner scanner,int roundNumber) throws Exception {
         Player tempPlayer1;
         Player tempPlayer2;
-        //TODO:this needs serious simplification, not very DRY!!!!!! Can be simplified very easily: the if statement goes above tempplayer and then bottom statement is removed
         if ((player1.isUnderTheGun()&&roundNumber%2==1)||(!player1.isUnderTheGun()&&roundNumber%2==0)){
             tempPlayer1 = player1;
             tempPlayer2 = player2;
-            //here the response of player 1
-            // here we will have the response of player two
         } else {
             tempPlayer2=player1;
             tempPlayer1=player2;
         }
         starterRoundOfAction(game,tempPlayer1,scanner,roundNumber);
         do {
-
             responseAction(game, tempPlayer2, tempPlayer1, scanner,roundNumber);
             Player extra = tempPlayer1;
             tempPlayer1 = tempPlayer2;
             tempPlayer2 = extra;
-        } while(checkConditionforBetting(tempPlayer1,tempPlayer2));
+        } while(checkConditionContinue(tempPlayer1,tempPlayer2));
         if (Objects.equals(tempPlayer1.getName(), player1.getName())){
             player1=tempPlayer1;
             player2=tempPlayer2;
@@ -107,10 +104,6 @@ public class App {
         checkPlayCheck(player,action);
         checkPlayFold(player,action);
         checkPlayAllIn(game,player,action);
-
-
-
-
     }
     private static void responseAction(Game game, Player you,Player opponent,Scanner scanner,int roundNumber) throws Exception {
         // check what was previous player's action
@@ -118,13 +111,13 @@ public class App {
         if (opponent.isAllIn()){
             allInResponse(game,you,opponent,scanner,roundNumber);
         }
-        if (opponent.isCheckedLastRound()){
+        else if (opponent.isCheckedLastRound()){
             checkInResponse(game,you,opponent,scanner,roundNumber);
         }
-        if (!opponent.isInGame()){
+        else if (!opponent.isInGame()){
             foldResponse(game,you,opponent);
         }
-        if (opponent.getLastBet()>0){
+        else if (opponent.getLastBet()>0){
             betResponse(game,you,opponent,scanner,roundNumber);
         }
     }
@@ -252,14 +245,13 @@ public class App {
         System.out.printf("You had : %s\n",Poker.getCombinationsScoreReverse().get(combination));
     }
 
-    public static boolean checkConditionforBetting(Player player1,Player player2){
+    public static boolean checkConditionContinue(Player player1, Player player2){
         boolean bothInGame = player1.isInGame()&&player2.isInGame();
         boolean differentLastBet = player1.getLastBet()!=player2.getLastBet();
         boolean EitherNoCheck = !player1.isCheckedLastRound()||!player2.isCheckedLastRound();
-        boolean bothNotAllIn=!player1.isAllIn()&&!player2.isAllIn();
+        boolean bothNotAllIn=!(player1.isAllIn()&&player2.isAllIn());
         return bothInGame&&differentLastBet&&EitherNoCheck&&bothNotAllIn;
     }
-//    private static void checkPlayBet(Player player, Scanner scanner){}, implement this later
     private static void decideEntireGameWinner(Player player1, Player player2){
         Player winner = player1.getStack()==0?player2:player1;
         System.out.println("The Game ended!");
