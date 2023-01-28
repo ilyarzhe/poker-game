@@ -11,6 +11,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class PlayerTest {
     Player player1;
+    Player player2;
     Game game;
     Deck deck;
 
@@ -26,6 +27,7 @@ public class PlayerTest {
         Poker.buildSuitCountTracker();
         Poker.buildCardFrequencyTracker();
         player1 = new Player("Henry", 100, true, true);
+        player2 = new Player("Slava",90,true,false);
         game = new Game();
     }
 
@@ -438,7 +440,14 @@ public class PlayerTest {
         assertThat(Poker.getCombinations().get("Straight Flush")).isEqualTo(8);
     }
 
+    @Test
+    public void checkAllin() throws Exception {
+        player1.allIn(game,80,10);
+        player2.call(game,90,10);
+        assertThat(player2.getLastBet()).isEqualTo(90);
+    }
 
 }
+
 
 

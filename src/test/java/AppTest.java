@@ -26,12 +26,4 @@ public class AppTest {
         player1 = new Player("Henry",100,true,true);
         player2 = new Player("Carl",10,true,false);
     }
-    @Test
-    public void firstTest() throws Exception {
-        player1.allIn(game);
-        player2.allIn(game);
-        System.out.println(player1.getLastBet());
-        System.out.println(player2.getLastBet());
-        assertFalse(App.checkConditionContinue(player1, player2));
-    }
 }

@@ -115,6 +115,20 @@ public class Player {
         this.allIn=false;
         this.inGame=true;
     }
+    public void bet (int raiseAmount, int baseAmount, Game game)throws Exception{
+        if (raiseAmount+baseAmount-lastBet>this.stack){
+            System.out.printf("The stack:%s\n",this.stack);
+            throw new Exception("Error, You can't bet more than the stack amount. Try again!");
+
+        }
+        int extra = raiseAmount+baseAmount-lastBet;
+        this.stack -= extra;
+        game.addToPot(extra);
+        this.lastBet=raiseAmount+baseAmount;
+        this.checkedLastRound=false;
+        this.allIn=false;
+        this.inGame=true;
+    }
 
     public void fold() {
         this.inGame = false;
@@ -130,14 +144,28 @@ public class Player {
         this.allIn=false;
     }
 
-    public void allIn(Game game) {
-        int bet = this.stack;
+    public void allIn(Game game,int opponentStack,int opponentLastBet) {
+        int bet;
+        if (this.stack+this.lastBet>opponentStack+opponentLastBet) {
+            System.out.println("Help!!!!!");
+            bet = opponentStack+opponentLastBet;
+        } else {
+            bet = this.stack+this.lastBet;
+        }
         this.stack -= bet;
         game.addToPot(bet);
         this.lastBet=bet;
         this.checkedLastRound=false;
         this.inGame=true;
         this.allIn = true;
+    }
+    public void call(Game game, int opponentBet,int opponentStack) throws Exception {
+        System.out.println(opponentBet-lastBet);
+        bet(opponentBet-lastBet,game);
+        lastBet=opponentBet;
+        if (stack==0||opponentStack==0){
+            this.allIn=true;
+        }
     }
 
     public void winHand(Game game) {
