@@ -147,13 +147,13 @@ public class Player {
     public void allIn(Game game,int opponentStack,int opponentLastBet) {
         int bet;
         if (this.stack+this.lastBet>opponentStack+opponentLastBet) {
-            System.out.println("Help!!!!!");
             bet = opponentStack+opponentLastBet;
+            game.addToPot(bet-this.lastBet);
         } else {
             bet = this.stack+this.lastBet;
+            game.addToPot(this.stack);
         }
-        this.stack -= bet;
-        game.addToPot(bet);
+        this.stack -= bet-this.lastBet;
         this.lastBet=bet;
         this.checkedLastRound=false;
         this.inGame=true;

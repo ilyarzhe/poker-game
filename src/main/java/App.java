@@ -13,8 +13,8 @@ public class App {
 //      two lines below are removed for testing purposes
 //        Player player1 = generatePlayer(scanner,1);
 //        Player player2 = generatePlayer(scanner, 2);
-        Player player1 = new Player("Henry",100,true,true);
-        Player player2 = new Player("Slava",90,true,false);
+        Player player1 = new Player("Henry",90,true,true);
+        Player player2 = new Player("Louis",100,true,false);
 
         while (player1.getStack()>0&&player2.getStack()>0) {
             player1.drawHand(game);
@@ -93,8 +93,6 @@ public class App {
             player1 = tempPlayer2;
             player2 = tempPlayer1;
         }
-        player1.setLastBet(0);
-        player2.setLastBet(0);
         System.out.printf("The pot is %s\n",game.getPot());
         System.out.println("-".repeat(10));
     }
@@ -180,6 +178,8 @@ public class App {
             System.out.println("\nCommunity Cards:");
             System.out.println(game.getCardTable());
         }
+        System.out.println("The pot:");
+        System.out.println(game.getPot()+"\n");
         System.out.println("\nYour Hand:");
         System.out.println(player.getHand().toString()+"\n");
         System.out.println("Your Stack:");
@@ -229,6 +229,7 @@ public class App {
     private static void checkPlayAllIn(Game game,Player player, String action, Player opponent){
         if (action.equalsIgnoreCase(Actions.ALLIN.toString())){
             player.allIn(game,opponent.getStack(),opponent.getLastBet());
+            System.out.println(game.getPot());
         }
     }
     private static void checkPlayCall(Game game,Player player,Player opponent, String action) throws Exception {

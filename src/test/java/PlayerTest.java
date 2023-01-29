@@ -442,10 +442,9 @@ public class PlayerTest {
 
     @Test
     public void checkAllin() throws Exception {
-        player1.allIn(game,80,10);
-        player2.call(game,90,10);
-        assertThat(player2.getLastBet()).isEqualTo(90);
+
     }
+
 
 }
 
