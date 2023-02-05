@@ -13,7 +13,7 @@ public class App {
 //      two lines below are removed for testing purposes
 //        Player player1 = generatePlayer(scanner,1);
 //        Player player2 = generatePlayer(scanner, 2);
-        Player player1 = new Player("Henry",90,true,true);
+        Player player1 = new Player("Henry",100,true,true);
         Player player2 = new Player("Louis",100,true,false);
 
         while (player1.getStack()>0&&player2.getStack()>0) {
